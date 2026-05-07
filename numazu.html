@@ -285,6 +285,18 @@ function cdZh(cd){
   return s.replace(/[・/]/g,' / ').replace(/祝/g,'节假日').replace(/\s+/g,' ').trim();
 }
 
+// ── 别名映射（店名罗马字 / 英文 → 日文匹配） ─────────────────────────────────
+const ALIASES={
+  'グランマ':['grandma'],
+};
+function searchText(f){
+  let s=[f.name,f.area,f.type,f.note||''].join(' ').toLowerCase();
+  for(const[jp,alts] of Object.entries(ALIASES)){
+    if(f.name.includes(jp)) s+=' '+alts.join(' ');
+  }
+  return s;
+}
+
 // ── 类型颜色 ──────────────────────────────────────────────────────────────────
 const TC={温泉:'#E6F1FB,#185FA5',公園:'#EAF3DE,#3B6D11',餐馆:'#FAEEDA,#854F0B',
 甜点:'#FBEAF0,#993556','Café':'#EEEDFE,#534AB7',参观:'#E1F5EE,#0F6E56',
@@ -372,7 +384,7 @@ function card(f,st){
 function render(){
   const q=(document.getElementById('search').value||'').toLowerCase();
   const all=FS.filter(f=>{
-    const mq=!q||f.name.toLowerCase().includes(q)||f.area.includes(q)||f.type.includes(q)||(f.note||'').toLowerCase().includes(q);
+    const mq=!q||searchText(f).includes(q);
     return mq&&(!SA||f.area===SA)&&(!ST||f.type===ST);
   });
   const ws=all.map(f=>({f,s:status(f,SD)}));
