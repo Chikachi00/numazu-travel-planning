@@ -285,12 +285,85 @@ function cdZh(cd){
   return s.replace(/[・/]/g,' / ').replace(/祝/g,'节假日').replace(/\s+/g,' ').trim();
 }
 
-// ── 别名映射（店名罗马字 / 英文 → 日文匹配） ─────────────────────────────────
-const ALIASES={
-  'グランマ':['grandma'],
+// ── 片假名 → 罗马字（让拼读搜索也能命中） ────────────────────────────────────
+const KR2={
+  'キャ':'kya','キュ':'kyu','キョ':'kyo','キェ':'kye',
+  'シャ':'sha','シュ':'shu','ショ':'sho','シェ':'she',
+  'チャ':'cha','チュ':'chu','チョ':'cho','チェ':'che',
+  'ニャ':'nya','ニュ':'nyu','ニョ':'nyo',
+  'ヒャ':'hya','ヒュ':'hyu','ヒョ':'hyo',
+  'ミャ':'mya','ミュ':'myu','ミョ':'myo',
+  'リャ':'rya','リュ':'ryu','リョ':'ryo',
+  'ギャ':'gya','ギュ':'gyu','ギョ':'gyo',
+  'ジャ':'ja','ジュ':'ju','ジョ':'jo','ジェ':'je',
+  'ビャ':'bya','ビュ':'byu','ビョ':'byo',
+  'ピャ':'pya','ピュ':'pyu','ピョ':'pyo',
+  'ファ':'fa','フィ':'fi','フェ':'fe','フォ':'fo','フュ':'fyu',
+  'ヴァ':'va','ヴィ':'vi','ヴェ':'ve','ヴォ':'vo',
+  'ティ':'ti','テュ':'tyu','ディ':'di','デュ':'dyu',
+  'ウィ':'wi','ウェ':'we','ウォ':'wo',
+  'ア':'a','イ':'i','ウ':'u','エ':'e','オ':'o',
+  'カ':'ka','キ':'ki','ク':'ku','ケ':'ke','コ':'ko',
+  'サ':'sa','シ':'shi','ス':'su','セ':'se','ソ':'so',
+  'タ':'ta','チ':'chi','ツ':'tsu','テ':'te','ト':'to',
+  'ナ':'na','ニ':'ni','ヌ':'nu','ネ':'ne','ノ':'no',
+  'ハ':'ha','ヒ':'hi','フ':'fu','ヘ':'he','ホ':'ho',
+  'マ':'ma','ミ':'mi','ム':'mu','メ':'me','モ':'mo',
+  'ヤ':'ya','ユ':'yu','ヨ':'yo',
+  'ラ':'ra','リ':'ri','ル':'ru','レ':'re','ロ':'ro',
+  'ワ':'wa','ヲ':'wo','ン':'n','ヴ':'vu',
+  'ガ':'ga','ギ':'gi','グ':'gu','ゲ':'ge','ゴ':'go',
+  'ザ':'za','ジ':'ji','ズ':'zu','ゼ':'ze','ゾ':'zo',
+  'ダ':'da','ヂ':'di','ヅ':'du','デ':'de','ド':'do',
+  'バ':'ba','ビ':'bi','ブ':'bu','ベ':'be','ボ':'bo',
+  'パ':'pa','ピ':'pi','プ':'pu','ペ':'pe','ポ':'po',
+  'ー':''
 };
+function toRomaji(str){
+  let r='',i=0;
+  while(i<str.length){
+    if(str[i]==='ッ'){
+      const nxt=KR2[str.slice(i+1,i+3)]||KR2[str[i+1]]||'';
+      if(nxt&&!/^[aeiou]/.test(nxt)) r+=nxt[0];
+      i++;continue;
+    }
+    const c2=KR2[str.slice(i,i+2)];
+    if(c2!==undefined){r+=c2;i+=2;continue;}
+    const c1=KR2[str[i]];
+    if(c1!==undefined){r+=c1;i++;continue;}
+    r+=str[i];i++;
+  }
+  return r;
+}
+
+// ── 英文别名（罗马字与英文差异较大时手动补充） ─────────────────────────────
+const ALIASES={
+  'グランマ':      ['grandma'],
+  'アニメイト':    ['animate'],
+  'ゲーマーズ':    ['gamers','gamer','game'],
+  'シネマサンシャイン': ['cinema','movie','theater','sunshine'],
+  'マルサンホビー':['hobby'],
+  'びゅうお':      ['view','viewo'],
+  'ドールハウス':  ['doll','dollhouse'],
+  'マリンパーク':  ['marine','park'],
+  'プレミアムショップ': ['premium','shop'],
+  'ザ・サードプラネット':['planet','third planet'],
+  'ここス':        ['cocos'],
+  'ベルマート':    ['bell','mart'],
+  'キヨスク':      ['kiosk'],
+  'リバーサイド':  ['riverside'],
+  'カレーキッチン':['curry','kitchen'],
+  '印度屋':        ['india','indian'],
+  'プラサヴェルデ':['plaza','verde'],
+  'アスルクラロ':  ['azul','claro'],
+  '水族館':        ['aquarium'],
+  'マリンパーク':  ['marine'],
+  'サンビーチ':    ['beach','sunbeach'],
+};
+
 function searchText(f){
-  let s=[f.name,f.area,f.type,f.note||''].join(' ').toLowerCase();
+  const romaji=toRomaji(f.name).toLowerCase();
+  let s=[f.name,f.area,f.type,f.note||'',romaji].join(' ').toLowerCase();
   for(const[jp,alts] of Object.entries(ALIASES)){
     if(f.name.includes(jp)) s+=' '+alts.join(' ');
   }
