@@ -2,10 +2,6 @@
 
 静岡県沼津市の店舗・施設の営業日を日付で一括確認できる静的Webアプリです。
 
-**[→ 在线访问](https://your-username.github.io/your-repo-name)**
-
----
-
 ## 功能
 
 - 选择日期后自动判断每家店当天是否开门
@@ -31,13 +27,6 @@ open index.html   # macOS
 # 或直接双击 index.html
 ```
 
-## 部署到 GitHub Pages
-
-1. 将仓库设为 **Public**
-2. 进入 **Settings → Pages**
-3. Source 选择 `Deploy from a branch`，Branch 选 `main`，目录选 `/ (root)`
-4. 保存后约 1 分钟，访问 `https://your-username.github.io/your-repo-name`
-
 ---
 
 ## 更新店铺数据
@@ -48,7 +37,7 @@ open index.html   # macOS
 [id, 店名, 地区, 类型, 开门时间, 关门时间, 周末时间, 定休日, 门票价格, 周末价格, 备注]
 ```
 
-**示例：**
+示例：
 
 ```js
 [72, '魚河岸丸天', '沼津港', '餐馆', '10:00', '21:00', null, '木', null, null, '祝日は水曜休'],
@@ -67,8 +56,6 @@ open index.html   # macOS
 | `'不定休'` | 不定期休息（显示为黄色） |
 | `'無'` | 无定休日 |
 | `null` | 信息不明（显示为灰色待确认） |
-
-修改后直接 `git push`，GitHub Pages 自动更新，无需任何构建步骤。
 
 ---
 
